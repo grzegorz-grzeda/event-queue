@@ -21,9 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+#include "event-queue.h"
 #include <g2labs-platform-queue.h>
 #include <string.h>
-#include "event-queue.h"
 
 #ifndef EVENT_QUEUE_MAX_COUNT
 #error "EVENT_QUEUE_MAX_COUNT not defined!"
@@ -33,28 +33,28 @@
 static platform_queue_t* event_queue = NULL;
 
 void event_queue_initialize(void) {
-  event_queue = platform_queue_create(sizeof(event_t), EVENT_QUEUE_MAX_COUNT);
+    event_queue = platform_queue_create(sizeof(event_t), EVENT_QUEUE_MAX_COUNT);
 }
 
 void event_queue_destroy(void) {
-  platform_queue_destroy(event_queue);
+    platform_queue_destroy(event_queue);
 }
 
 void event_queue_send_fast_event(uint16_t id) {
-  event_queue_send_event(id, NULL);
+    event_queue_send_event(id, NULL);
 }
 
 void event_queue_send_event(uint16_t id, const void* payload) {
-  event_t e = {.id = id, .payload = {0}};
-  if (payload) {
-    memcpy(e.payload, payload, EVENT_PAYLOAD_MAX_SIZE);
-  }
-  platform_queue_push(event_queue, &e);
+    event_t e = {.id = id, .payload = {0}};
+    if (payload) {
+        memcpy(e.payload, payload, EVENT_QUEUE_PAYLOAD_MAX_SIZE);
+    }
+    platform_queue_push(event_queue, &e);
 }
 
 bool event_queue_fetch_event(event_t* event) {
-  if (!event) {
-    return false;
-  }
-  return platform_queue_fetch(event_queue, event);
+    if (!event) {
+        return false;
+    }
+    return platform_queue_fetch(event_queue, event);
 }
